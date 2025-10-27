@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "yvVahQHZJCOEuhq3Yr9AjqNt7DaP5nzM21qxooDgWb8=",
+  "Source": "ComuniApp.Api",
+  "BasePath": "_content/ComuniApp.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
