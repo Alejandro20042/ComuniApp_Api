@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComuniApp.Api", "ComuniApp.Api.csproj", "{695FBFD6-BE66-9C42-09D4-514B0AFE4FEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{695FBFD6-BE66-9C42-09D4-514B0AFE4FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{695FBFD6-BE66-9C42-09D4-514B0AFE4FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{695FBFD6-BE66-9C42-09D4-514B0AFE4FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{695FBFD6-BE66-9C42-09D4-514B0AFE4FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2F8B0F1-008C-44F6-9834-3D60D79F246F}
+	EndGlobalSection
+EndGlobal
