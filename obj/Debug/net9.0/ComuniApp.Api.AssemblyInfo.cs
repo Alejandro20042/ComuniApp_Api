@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ComuniApp.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fd04d2aa277b820028d74b6d472f9df110142d7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42dfafb25af1541bbfcf0289e35c1859cf51583b")]
 [assembly: System.Reflection.AssemblyProductAttribute("ComuniApp.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ComuniApp.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
