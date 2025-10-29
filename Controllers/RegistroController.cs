@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using ComuniApp.Api.Data;
+using ComuniApp.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,8 +37,30 @@ public class RegistroController : ControllerBase
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
 
-        return Ok(new { usuario.Email, usuario.TipoUsuario }); // solo devolvemos lo necesario
+        int? solicitanteId = null;
+        if (usuario.TipoUsuario == "solicitante")
+        {
+            var solicitante = new Solicitante
+            {
+                UsuarioId = usuario.Id,
+                Organizacion = "",
+                Descripcion = ""
+            };
+            _context.Solicitantes.Add(solicitante);
+            await _context.SaveChangesAsync();
+            solicitanteId = solicitante.Id;
+        }
+
+        return Ok(new
+        {
+            usuario.Id,
+            usuario.Email,
+            usuario.Nombre,
+            usuario.TipoUsuario,
+            solicitanteId
+        });
     }
+
 
     private string HashPassword(string password)
     {

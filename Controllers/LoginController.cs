@@ -21,15 +21,31 @@ public class LoginController : ControllerBase
     {
         string hashedPassword = HashPassword(request.Contraseña);
 
-        // Buscar por email
         var usuario = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.Nombre == request.Usuario && u.Contraseña == hashedPassword);
+        .Include(u => u.Solicitante)
+        .FirstOrDefaultAsync(u => u.Nombre == request.Usuario && u.Contraseña == hashedPassword);
+
 
         if (usuario == null)
             return Unauthorized("Usuario o contraseña incorrectos.");
 
-        return Ok(new { usuario.Email, usuario.TipoUsuario });
+        int? solicitanteId = null;
+        if (usuario.TipoUsuario == "solicitante")
+        {
+            solicitanteId = (await _context.Solicitantes.FirstOrDefaultAsync(s => s.UsuarioId == usuario.Id))?.Id;
+        }
+
+        return Ok(new
+        {
+            usuario.Id,
+            usuario.Email,
+            usuario.Nombre,
+            usuario.TipoUsuario,
+            solicitanteId
+        });
+
     }
+
 
     private string HashPassword(string password)
     {

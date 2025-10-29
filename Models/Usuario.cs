@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ComuniApp.Api.Models;
 
 [Table("usuarios")]  
 public class Usuario
@@ -28,4 +29,6 @@ public class Usuario
 
     [Column("fecha_registro")]
     public DateTime FechaRegistro { get; set; }
+
+    public Solicitante? Solicitante { get; set; }
 }
