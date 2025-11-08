@@ -80,7 +80,7 @@ namespace ComuniApp.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> ActualizarSolicitud(int id, [FromBody] Solicitud request)
+        public async Task<ActionResult> ActualizarSolicitud(int id, [FromBody] SolicitudUpdateDto request)
         {
             var solicitud = await _context.Solicitudes.FindAsync(id);
             if (solicitud == null)
