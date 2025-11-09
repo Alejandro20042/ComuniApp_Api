@@ -21,6 +21,7 @@ namespace ComuniApp.Api.Controllers
         public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudes()
         {
             var solicitudes = await _context.Solicitudes
+                .Include(s => s.Participaciones)
                 .Include(s => s.Solicitante)
                 .ThenInclude(s => s.Usuario)
                 .OrderByDescending(s => s.FechaCreacion)
@@ -106,6 +107,101 @@ namespace ComuniApp.Api.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("voluntario/{usuarioId}")]
+        public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudesVoluntario(int usuarioId)
+        {
+            // Buscar el voluntario por usuarioId
+            var voluntario = await _context.Voluntarios
+                .FirstOrDefaultAsync(v => v.UsuarioId == usuarioId);
+
+            if (voluntario == null) return BadRequest("El voluntario no existe.");
+
+            var solicitudes = await _context.Participaciones
+                .Where(p => p.VoluntarioId == voluntario.Id && p.Estado == "activo")
+                .Include(p => p.Solicitud)
+                    .ThenInclude(s => s.Solicitante)
+                        .ThenInclude(s => s.Usuario)
+                .Select(p => new SolicitudDto
+                {
+                    Id = p.Solicitud.Id,
+                    Titulo = p.Solicitud.Titulo,
+                    Descripcion = p.Solicitud.Descripcion,
+                    Ubicacion = p.Solicitud.Ubicacion,
+                    Estado = p.Solicitud.Estado,
+                    FechaCreacion = p.Solicitud.FechaCreacion,
+                    SolicitanteNombre = p.Solicitud.Solicitante.Usuario.Nombre,
+                    Organizacion = p.Solicitud.Solicitante.Organizacion
+                })
+                .ToListAsync();
+
+            return Ok(solicitudes);
+        }
+
+        [HttpPut("{id}/aceptar")]
+        public async Task<IActionResult> AceptarSolicitud(int id, [FromBody] AceptarSolicitudDto request)
+        {
+            if (request == null || request.VoluntarioId <= 0)
+                return BadRequest("UsuarioId es requerido y debe ser válido.");
+
+            var solicitud = await _context.Solicitudes.FindAsync(id);
+            if (solicitud == null) return NotFound("La solicitud no existe.");
+
+            // Buscar el voluntario usando UsuarioId
+            var voluntario = await _context.Voluntarios
+                .FirstOrDefaultAsync(v => v.UsuarioId == request.VoluntarioId);
+
+            if (voluntario == null) return BadRequest("El voluntario no existe.");
+
+            var yaParticipa = await _context.Participaciones
+                .AnyAsync(p => p.VoluntarioId == voluntario.Id && p.SolicitudId == solicitud.Id);
+            if (yaParticipa) return BadRequest("El voluntario ya participa en esta solicitud.");
+
+            var participacion = new Participacion
+            {
+                VoluntarioId = voluntario.Id, // aquí ya usamos la PK
+                SolicitudId = solicitud.Id,
+                Estado = "activo",
+                FechaParticipacion = DateTime.UtcNow
+            };
+            _context.Participaciones.Add(participacion);
+
+            solicitud.Estado = "en progreso";
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok("Solicitud aceptada correctamente.");
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, "Ocurrió un error al guardar la participación: " + ex.Message);
+            }
+        }
+        // Endpoint para obtener solicitudes pendientes (no tomadas)
+        [HttpGet("pendientes")]
+        public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudesPendientes()
+        {
+            var solicitudes = await _context.Solicitudes
+                .Where(s => s.Estado == "pendiente" &&
+                            !_context.Participaciones.Any(p => p.SolicitudId == s.Id && p.Estado == "activo"))
+                .Include(s => s.Solicitante)
+                    .ThenInclude(s => s.Usuario)
+                .Select(s => new SolicitudDto
+                {
+                    Id = s.Id,
+                    Titulo = s.Titulo,
+                    Descripcion = s.Descripcion,
+                    Ubicacion = s.Ubicacion,
+                    Estado = s.Estado,
+                    FechaCreacion = s.FechaCreacion,
+                    SolicitanteNombre = s.Solicitante.Usuario.Nombre,
+                    Organizacion = s.Solicitante.Organizacion
+                })
+                .ToListAsync();
+
+            return Ok(solicitudes);
         }
     }
 }

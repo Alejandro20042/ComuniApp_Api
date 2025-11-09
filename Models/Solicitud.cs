@@ -22,5 +22,6 @@ namespace ComuniApp.Api.Models
         [Column("fecha_creacion")]
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public Solicitante Solicitante { get; set; } = null!;
+        public ICollection<Participacion> Participaciones { get; set; } = new List<Participacion>();
     }
 }

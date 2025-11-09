@@ -35,9 +35,11 @@ public class RegistroController : ControllerBase
         };
 
         _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(); // Guarda usuario y obtiene Id
 
         int? solicitanteId = null;
+        int? voluntarioId = null;
+
         if (usuario.TipoUsuario == "solicitante")
         {
             var solicitante = new Solicitante
@@ -50,6 +52,19 @@ public class RegistroController : ControllerBase
             await _context.SaveChangesAsync();
             solicitanteId = solicitante.Id;
         }
+        else if (usuario.TipoUsuario == "voluntario")
+        {
+            var voluntario = new Voluntario
+            {
+                UsuarioId = usuario.Id,
+                Habilidades = "",
+                Disponibilidad = "",
+                Experiencia = ""
+            };
+            _context.Voluntarios.Add(voluntario);
+            await _context.SaveChangesAsync();
+            voluntarioId = voluntario.Id;
+        }
 
         return Ok(new
         {
@@ -57,10 +72,10 @@ public class RegistroController : ControllerBase
             usuario.Email,
             usuario.Nombre,
             usuario.TipoUsuario,
-            solicitanteId
+            solicitanteId,
+            voluntarioId
         });
     }
-
 
     private string HashPassword(string password)
     {

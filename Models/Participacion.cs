@@ -12,11 +12,12 @@ namespace ComuniApp.Api.Models
         public int VoluntarioId { get; set; }
         [Column("solicitud_id")]
         public int SolicitudId { get; set; }
-        public Solicitud Solicitud { get; set; } = null!;
         [Column("estado")]
         public string Estado { get; set; } = "activo"; // activo, finalizado, cancelado
         [Column("fecha_participacion")]
         public DateTime FechaParticipacion { get; set; } = DateTime.UtcNow;
         public Voluntario Voluntario { get; set; } = null!;
+        public Solicitud Solicitud { get; set; } = null!;
+
     }
 }
