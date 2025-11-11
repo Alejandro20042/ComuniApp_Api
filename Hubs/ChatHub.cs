@@ -7,8 +7,7 @@ namespace ComuniApp.Api.Hubs
 {
     public class ChatHub : Hub
     {
-        private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> _connections
-            = new();
+        private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> _connections = new();
         public override Task OnConnectedAsync()
         {
             var http = Context.GetHttpContext();
@@ -38,8 +37,6 @@ namespace ComuniApp.Api.Hubs
 
             return base.OnDisconnectedAsync(exception);
         }
-        
-        // Enviar mensaje: si toUserId == 0 => broadcast, sino envio dirigido
         public Task SendMessage(int fromUserId, int toUserId, string message)
         {
             var payload = new
@@ -50,19 +47,21 @@ namespace ComuniApp.Api.Hubs
                 timestamp = DateTime.UtcNow
             };
 
-
-
             if (toUserId <= 0)
             {
                 return Clients.All.SendAsync("ReceiveMessage", payload);
             }
 
-            // Si el destinatario no está conectado, simplemente ignora o guarda para luego
-            if (!_connections.TryGetValue(toUserId, out var targetConns))
+            // Buscar conexiones del destinatario
+            if (_connections.TryGetValue(toUserId, out var targetConns))
             {
-                Console.WriteLine($"⚠️ Usuario {toUserId} no conectado. Mensaje no entregado.");
-                return Task.CompletedTask;
+                var tasks = targetConns.Keys.Select(connId =>
+                    Clients.Client(connId).SendAsync("ReceiveMessage", payload)
+                );
+
+                return Task.WhenAll(tasks);
             }
+
 
             // si no está conectado el destinatario, opcional: fallback al emisor o guardar en BD (no implementado)
             return Task.CompletedTask;

@@ -28,11 +28,11 @@ public class MensajesController : ControllerBase
         if (participacion == null)
             return BadRequest("La solicitud no tiene un voluntario asignado.");
 
-        var info = new
+        var info = new ChatInfoDto
         {
-            SolicitudId = solicitud.Id,
-            solicitud.SolicitanteId,
-            participacion.VoluntarioId
+            solicitudId = solicitud.Id,
+            solicitanteId = solicitud.SolicitanteId,
+            voluntarioId = participacion.VoluntarioId
         };
 
         return Ok(info);

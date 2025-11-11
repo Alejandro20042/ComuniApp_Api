@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ComuniApp.Api.Models;
+using ComuniApp_Api.Models;
 
 namespace ComuniApp.Api.Data
 {
@@ -12,5 +13,6 @@ namespace ComuniApp.Api.Data
         public DbSet<Solicitante> Solicitantes { get; set; }
         public DbSet<Solicitud> Solicitudes { get; set; }
         public DbSet<Participacion> Participaciones { get; set; }
+        public DbSet<Mensaje> Mensajes { get; set; }
     }
 }
