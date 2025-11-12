@@ -1,17 +1,24 @@
-namespace ComuniApp_Api.Models
+using System.ComponentModel.DataAnnotations.Schema;
+using ComuniApp.Api.Models;
+
+[Table("mensajes")]
+public class Mensaje
 {
-    public class Mensaje
-    {
-        public int Id { get; set; }
+    [Column("id")]
+    public int Id { get; set; }
+    [Column("solicitud_id")]
+    public int SolicitudId { get; set; }
+    [Column("emisor_id")]
+    public int EmisorId { get; set; }
+    [Column("receptor_id")]
+    public int ReceptorId { get; set; }
+    [Column("contenido")]
+    public string Contenido { get; set; } = string.Empty;
+    [Column("fecha_envio")]
+    public DateTime FechaEnvio { get; set; } = DateTime.UtcNow;
 
-        public int EmisorId { get; set; }
-        public Usuario Emisor { get; set; }   // relación con tabla usuarios
-
-        public int ReceptorId { get; set; }
-        public Usuario Receptor { get; set; } // relación con tabla usuarios
-
-        public string Contenido { get; set; }
-
-        public DateTime FechaEnvio { get; set; } = DateTime.UtcNow;
-    }
+    // Relaciones opcionales
+    public Solicitud Solicitud { get; set; }
+    public Usuario Emisor { get; set; }
+    public Usuario Receptor { get; set; }
 }

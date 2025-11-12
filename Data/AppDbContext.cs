@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using ComuniApp.Api.Models;
-using ComuniApp_Api.Models;
 
 namespace ComuniApp.Api.Data
 {

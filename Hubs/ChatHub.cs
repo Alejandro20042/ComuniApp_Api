@@ -1,3 +1,4 @@
+using ComuniApp.Api.Data;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -8,6 +9,12 @@ namespace ComuniApp.Api.Hubs
     public class ChatHub : Hub
     {
         private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> _connections = new();
+        private readonly AppDbContext _context;
+
+        public ChatHub(AppDbContext context)
+        {
+            _context = context;
+        }
         public override Task OnConnectedAsync()
         {
             var http = Context.GetHttpContext();
@@ -37,8 +44,19 @@ namespace ComuniApp.Api.Hubs
 
             return base.OnDisconnectedAsync(exception);
         }
-        public Task SendMessage(int fromUserId, int toUserId, string message)
+        public async Task SendMessage(int fromUserId, int toUserId,int solicitudId, string message)
         {
+            var nuevoMensaje = new Mensaje
+            {
+                SolicitudId = solicitudId,
+                EmisorId = fromUserId,
+                ReceptorId = toUserId,
+                Contenido = message,
+                FechaEnvio = DateTime.UtcNow
+            };
+            _context.Mensajes.Add(nuevoMensaje);
+            await _context.SaveChangesAsync();
+
             var payload = new
             {
                 fromUserId,
@@ -49,7 +67,7 @@ namespace ComuniApp.Api.Hubs
 
             if (toUserId <= 0)
             {
-                return Clients.All.SendAsync("ReceiveMessage", payload);
+                await Clients.All.SendAsync("ReceiveMessage", payload);
             }
 
             // Buscar conexiones del destinatario
@@ -59,12 +77,10 @@ namespace ComuniApp.Api.Hubs
                     Clients.Client(connId).SendAsync("ReceiveMessage", payload)
                 );
 
-                return Task.WhenAll(tasks);
+                await Task.WhenAll(tasks);
             }
-
-
             // si no está conectado el destinatario, opcional: fallback al emisor o guardar en BD (no implementado)
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
     }
 }

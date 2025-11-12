@@ -1,6 +1,8 @@
 public class ChatInfoDto
 {
-    public int solicitudId { get; set; }
-    public int solicitanteId { get; set; }
-    public int voluntarioId { get; set; }
+    internal int solicitanteId;
+
+    public int SolicitudId { get; set; }
+    public int SolicitanteUsuarioId { get; set; }  // 👈 usuario_id real
+    public int VoluntarioUsuarioId { get; set; }   // 👈 usuario_id real
 }

@@ -19,6 +19,8 @@ public class MensajesController : ControllerBase
     {
         var solicitud = await _context.Solicitudes
             .Include(s => s.Participaciones)
+                .ThenInclude(p => p.Voluntario)   // 👈 incluye voluntario
+            .Include(s => s.Solicitante)          // 👈 incluye solicitante
             .FirstOrDefaultAsync(s => s.Id == solicitudId);
 
         if (solicitud == null)
@@ -30,12 +32,24 @@ public class MensajesController : ControllerBase
 
         var info = new ChatInfoDto
         {
-            solicitudId = solicitud.Id,
-            solicitanteId = solicitud.SolicitanteId,
-            voluntarioId = participacion.VoluntarioId
+            SolicitudId = solicitud.Id,
+            SolicitanteUsuarioId = solicitud.Solicitante.UsuarioId,   // 👈 usuario_id
+            VoluntarioUsuarioId = participacion.Voluntario.UsuarioId  // 👈 usuario_id
         };
 
         return Ok(info);
+    }
+
+
+    [HttpGet("historial/{solicitudId}")]
+    public async Task<IActionResult> ObtenerHistorial(int solicitudId)
+    {
+        var mensajes = await _context.Mensajes
+            .Where(m => m.SolicitudId == solicitudId)
+            .OrderBy(m => m.FechaEnvio)
+            .ToListAsync();
+
+        return Ok(mensajes);
     }
 
 }
