@@ -1,0 +1,57 @@
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    email VARCHAR(150) UNIQUE NOT NULL,
+    contraseña TEXT NOT NULL,
+    telefono VARCHAR(20),
+    tipo_usuario VARCHAR(20) CHECK (tipo_usuario IN ('voluntario', 'solicitante')),
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE voluntarios (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT UNIQUE REFERENCES usuarios(id) ON DELETE CASCADE,
+    habilidades TEXT,
+    disponibilidad VARCHAR(100),
+    experiencia TEXT
+);
+
+
+CREATE TABLE solicitantes (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT UNIQUE REFERENCES usuarios(id) ON DELETE CASCADE,
+    organizacion VARCHAR(150),
+    descripcion TEXT
+);
+
+CREATE TABLE solicitudes (
+    id SERIAL PRIMARY KEY,
+    solicitante_id INT REFERENCES solicitantes(id) ON DELETE CASCADE,
+    titulo VARCHAR(200) NOT NULL,
+    descripcion TEXT NOT NULL,
+    ubicacion VARCHAR(150),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'en progreso', 'completada'))
+);
+
+
+CREATE TABLE participaciones (
+    id SERIAL PRIMARY KEY,
+    voluntario_id INT REFERENCES voluntarios(id) ON DELETE CASCADE,
+    solicitud_id INT REFERENCES solicitudes(id) ON DELETE CASCADE,
+    fecha_participacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) DEFAULT 'activo' CHECK (estado IN ('activo', 'finalizado', 'cancelado')),
+    UNIQUE (voluntario_id, solicitud_id)
+);
+
+CREATE TABLE mensajes (
+    id SERIAL PRIMARY KEY,
+    solicitud_id INT REFERENCES solicitudes(id) ON DELETE CASCADE,
+    emisor_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    receptor_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    contenido TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

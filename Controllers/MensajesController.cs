@@ -47,9 +47,19 @@ public class MensajesController : ControllerBase
         var mensajes = await _context.Mensajes
             .Where(m => m.SolicitudId == solicitudId)
             .OrderBy(m => m.FechaEnvio)
+            .Select(m => new
+            {
+                m.Id,
+                m.SolicitudId,
+                m.EmisorId,
+                m.ReceptorId,
+                m.Contenido,
+                m.FechaEnvio
+            })
             .ToListAsync();
 
         return Ok(mensajes);
     }
+
 
 }
