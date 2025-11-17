@@ -35,7 +35,7 @@ public class RegistroController : ControllerBase
         };
 
         _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync(); // Guarda usuario y obtiene Id
+        await _context.SaveChangesAsync(); 
 
         int? solicitanteId = null;
         int? voluntarioId = null;

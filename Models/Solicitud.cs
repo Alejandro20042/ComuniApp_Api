@@ -18,7 +18,7 @@ namespace ComuniApp.Api.Models
         [Column("ubicacion")]
         public string? Ubicacion { get; set; }
         [Column("estado")]
-        public string Estado { get; set; } = "pendiente"; // pendiente, en progreso, completada
+        public string Estado { get; set; } = "pendiente"; 
         [Column("fecha_creacion")]
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public Solicitante Solicitante { get; set; } = null!;

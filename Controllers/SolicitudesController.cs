@@ -71,8 +71,6 @@ namespace ComuniApp.Api.Controllers
                 FechaCreacion = DateTime.UtcNow
             };
 
-
-
             _context.Solicitudes.Add(solicitud);
             await _context.SaveChangesAsync();
 
@@ -112,7 +110,7 @@ namespace ComuniApp.Api.Controllers
         [HttpGet("voluntario/{usuarioId}")]
         public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudesVoluntario(int usuarioId)
         {
-            // Buscar el voluntario por usuarioId
+            // Busca el voluntario por usuarioId
             var voluntario = await _context.Voluntarios
                 .FirstOrDefaultAsync(v => v.UsuarioId == usuarioId);
 
@@ -148,7 +146,7 @@ namespace ComuniApp.Api.Controllers
             var solicitud = await _context.Solicitudes.FindAsync(id);
             if (solicitud == null) return NotFound("La solicitud no existe.");
 
-            // Buscar el voluntario usando UsuarioId
+            // Busca el voluntario usando UsuarioId
             var voluntario = await _context.Voluntarios
                 .FirstOrDefaultAsync(v => v.UsuarioId == request.VoluntarioId);
 
@@ -160,7 +158,7 @@ namespace ComuniApp.Api.Controllers
 
             var participacion = new Participacion
             {
-                VoluntarioId = voluntario.Id, // aquí ya usamos la PK
+                VoluntarioId = voluntario.Id,
                 SolicitudId = solicitud.Id,
                 Estado = "activo",
                 FechaParticipacion = DateTime.UtcNow
@@ -179,7 +177,7 @@ namespace ComuniApp.Api.Controllers
                 return StatusCode(500, "Ocurrió un error al guardar la participación: " + ex.Message);
             }
         }
-        // Endpoint para obtener solicitudes pendientes (no tomadas)
+        // Endpoint para obtener solicitudes pendientes
         [HttpGet("pendientes")]
         public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudesPendientes()
         {

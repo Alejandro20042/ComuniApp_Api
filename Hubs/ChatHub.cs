@@ -79,7 +79,6 @@ namespace ComuniApp.Api.Hubs
 
                 await Task.WhenAll(tasks);
             }
-            // si no está conectado el destinatario, opcional: fallback al emisor o guardar en BD (no implementado)
             await Task.CompletedTask;
         }
     }

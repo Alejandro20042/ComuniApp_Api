@@ -17,7 +17,6 @@ public class Mensaje
     [Column("fecha_envio")]
     public DateTime FechaEnvio { get; set; } = DateTime.UtcNow;
 
-    // Relaciones opcionales
     public Solicitud? Solicitud { get; set; }
     public Usuario? Emisor { get; set; }
     public Usuario? Receptor { get; set; }

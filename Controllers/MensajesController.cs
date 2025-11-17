@@ -19,8 +19,8 @@ public class MensajesController : ControllerBase
     {
         var solicitud = await _context.Solicitudes
             .Include(s => s.Participaciones)
-                .ThenInclude(p => p.Voluntario)   // 👈 incluye voluntario
-            .Include(s => s.Solicitante)          // 👈 incluye solicitante
+                .ThenInclude(p => p.Voluntario)   
+            .Include(s => s.Solicitante)          
             .FirstOrDefaultAsync(s => s.Id == solicitudId);
 
         if (solicitud == null)
@@ -33,8 +33,8 @@ public class MensajesController : ControllerBase
         var info = new ChatInfoDto
         {
             SolicitudId = solicitud.Id,
-            SolicitanteUsuarioId = solicitud.Solicitante.UsuarioId,   // 👈 usuario_id
-            VoluntarioUsuarioId = participacion.Voluntario.UsuarioId  // 👈 usuario_id
+            SolicitanteUsuarioId = solicitud.Solicitante.UsuarioId,   
+            VoluntarioUsuarioId = participacion.Voluntario.UsuarioId  
         };
 
         return Ok(info);
