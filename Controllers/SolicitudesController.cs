@@ -34,7 +34,7 @@ namespace ComuniApp.Api.Controllers
                     Estado = s.Estado,
                     FechaCreacion = s.FechaCreacion,
                     SolicitanteNombre = s.Solicitante.Usuario.Nombre,
-                    Organizacion = s.Solicitante.Organizacion
+                    Organizacion = s.Solicitante.Organizacion,
                 })
                 .ToListAsync();
 
@@ -177,6 +177,7 @@ namespace ComuniApp.Api.Controllers
                 return StatusCode(500, "Ocurrió un error al guardar la participación: " + ex.Message);
             }
         }
+
         // Endpoint para obtener solicitudes pendientes
         [HttpGet("pendientes")]
         public async Task<ActionResult<IEnumerable<SolicitudDto>>> GetSolicitudesPendientes()
@@ -211,13 +212,54 @@ namespace ComuniApp.Api.Controllers
                 Titulo = dto.Titulo,
                 Descripcion = dto.Descripcion,
                 Ubicacion = dto.Ubicacion,
-                Estado = "pendiente", // puedes forzar estado inicial
+                Estado = "pendiente",
                 FechaCreacion = DateTime.UtcNow
             };
             _context.Solicitudes.Add(solicitud);
             await _context.SaveChangesAsync();
-            
+
             return Ok(solicitud);
+        }
+
+        [HttpPut("{id}/completar")]
+        public async Task<IActionResult> CompletarSolicitud(int id, [FromBody] CompletarSolicitudDto request)
+        {
+            if (request == null || request.VoluntarioId <= 0)
+                return BadRequest("VoluntarioId es requerido y debe ser válido.");
+
+            var solicitud = await _context.Solicitudes.FindAsync(id);
+            if (solicitud == null) return NotFound("La solicitud no existe.");
+
+            // Validar que el voluntario participa en la solicitud
+            var participa = await _context.Participaciones
+                .AnyAsync(p => p.VoluntarioId == request.VoluntarioId && p.SolicitudId == id && p.Estado == "activo");
+            if (!participa) return BadRequest("El voluntario no participa en esta solicitud.");
+
+            solicitud.Estado = "completada";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Solicitud marcada como completada.", solicitud });
+        }
+
+        [HttpPut("{id}/confirmar")]
+        public async Task<IActionResult> ConfirmarSolicitud(int id, [FromBody] ConfirmarSolicitudDto request)
+        {
+            if (request == null || request.SolicitanteId <= 0)
+                return BadRequest("SolicitanteId es requerido y debe ser válido.");
+
+            var solicitud = await _context.Solicitudes.FindAsync(id);
+            if (solicitud == null) return NotFound("La solicitud no existe.");
+
+            if (solicitud.SolicitanteId != request.SolicitanteId)
+                return BadRequest("Este solicitante no es dueño de la solicitud.");
+
+            if (solicitud.Estado != "completada")
+                return BadRequest("La solicitud debe estar marcada como completada por un voluntario antes de confirmarla.");
+
+            solicitud.Estado = "finalizada";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Solicitud confirmada y cerrada.", solicitud });
         }
 
     }

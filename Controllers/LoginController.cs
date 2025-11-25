@@ -35,17 +35,25 @@ public class LoginController : ControllerBase
             solicitanteId = (await _context.Solicitantes.FirstOrDefaultAsync(s => s.UsuarioId == usuario.Id))?.Id;
         }
 
+        int? voluntarioId = null;
+        if (usuario.TipoUsuario == "voluntario")
+        {
+            var voluntario = await _context.Voluntarios
+                .FirstOrDefaultAsync(v => v.UsuarioId == usuario.Id);
+            voluntarioId = voluntario?.Id;
+        }
+
         return Ok(new
         {
             usuario.Id,
             usuario.Email,
             usuario.Nombre,
             usuario.TipoUsuario,
-            solicitanteId
+            solicitanteId,
+            voluntarioId
         });
 
     }
-
 
     private string HashPassword(string password)
     {
