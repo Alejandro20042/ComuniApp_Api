@@ -201,5 +201,24 @@ namespace ComuniApp.Api.Controllers
 
             return Ok(solicitudes);
         }
+
+        [HttpPost("offline-send")]
+        public async Task<IActionResult> EnviarOffline([FromBody] CreateSolicitudDto dto)
+        {
+            var solicitud = new Solicitud
+            {
+                SolicitanteId = dto.SolicitanteId,
+                Titulo = dto.Titulo,
+                Descripcion = dto.Descripcion,
+                Ubicacion = dto.Ubicacion,
+                Estado = "pendiente", // puedes forzar estado inicial
+                FechaCreacion = DateTime.UtcNow
+            };
+            _context.Solicitudes.Add(solicitud);
+            await _context.SaveChangesAsync();
+            
+            return Ok(solicitud);
+        }
+
     }
 }

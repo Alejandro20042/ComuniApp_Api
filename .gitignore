@@ -1,0 +1,31 @@
+# Build results
+bin/
+obj/
+
+# .NET generated files
+*.dll
+*.exe
+*.pdb
+*.cache
+*.cache.json
+
+# Visual Studio Code settings
+.vscode/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Publish output
+publish/
+wwwroot/lib/
+
+# Razor cache
+*.rz.scp.css
