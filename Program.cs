@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                       $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                       $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                       $"Password={Environment.GetEnvironmentVariable("DB_PASS")};" +
+                       $"SSL Mode=Require;";
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -17,8 +24,9 @@ builder.Services.AddCors(options =>
 });
 
 
+// DbContext usando la variable de entorno
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>

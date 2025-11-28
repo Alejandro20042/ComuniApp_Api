@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using ComuniApp.Api.Data;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -60,5 +60,27 @@ public class LoginController : ControllerBase
         using var sha256 = SHA256.Create();
         var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
         return Convert.ToBase64String(bytes);
+    }
+    [HttpGet("db")]
+    public IActionResult TestDatabase()
+    {
+        try
+        {
+          
+
+            // Conectarse a la DB
+            using var conn = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString);
+            conn.Open();
+
+            // Probar un query simple
+            using var cmd = new NpgsqlCommand("SELECT NOW();", conn);
+            var result = cmd.ExecuteScalar();
+
+            return Ok(new { message = "¡Conexión exitosa!", serverTime = result });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = "Error al conectar con la DB", error = ex.Message });
+        }
     }
 }
