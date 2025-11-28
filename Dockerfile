@@ -7,13 +7,13 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copiar el archivo .csproj correcto y restaurar dependencias
+# Copiar el .csproj y restaurar dependencias
 COPY ["ComuniApp.Api.csproj", "."]
-RUN dotnet restore "./ComuniApp.Api.csproj"
+RUN dotnet restore "ComuniApp.Api.csproj"
 
 # Copiar todo el proyecto y publicar
 COPY . .
-RUN dotnet publish "./ComuniApp.Api.csproj" -c Release -o /app/publish
+RUN dotnet publish "ComuniApp.Api.csproj" -c Release -o /app/publish
 
 # Imagen final
 FROM base AS final
