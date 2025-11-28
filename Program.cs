@@ -14,14 +14,15 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowNetlify",
         policy => policy
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials()
-                  .SetIsOriginAllowed(_ => true)
-        );
+            .WithOrigins("https://dancing-axolotl-1473f4.netlify.app") 
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
 });
+
 
 
 // DbContext usando la variable de entorno
@@ -40,7 +41,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseCors("AllowAll");
+app.UseCors("AllowNetlify");
 
 if (app.Environment.IsDevelopment())
 {
