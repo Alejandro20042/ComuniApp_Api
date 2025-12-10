@@ -41,11 +41,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+builder.Services.AddAuthentication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseCors("AllowNetlify");
+app.UseCors("CorsPolicy");
 
 if (app.Environment.IsDevelopment())
 {
@@ -53,6 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");
