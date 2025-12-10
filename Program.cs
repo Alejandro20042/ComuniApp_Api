@@ -15,12 +15,16 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowNetlify",
-        policy => policy
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "https://dancing-axolotl-1473f4.netlify.app",
+                "http://localhost:5173"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin()
-    );
+            .AllowCredentials();
+    });
 });
 
 
