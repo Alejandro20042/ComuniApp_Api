@@ -11,15 +11,15 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
                        $"Password={Environment.GetEnvironmentVariable("DB_PASS")};" +
                        $"SSL Mode=Require;";
 
+
 // CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowNetlify",
         policy => policy
-            .WithOrigins("https://dancing-axolotl-1473f4.netlify.app") 
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
+            .AllowAnyOrigin()
     );
 });
 
